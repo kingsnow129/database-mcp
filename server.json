@@ -1,0 +1,107 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.kingsnow129/sqlserver-mcp",
+  "title": "SQL Server MCP",
+  "description": "Connect to SQL Server, inspect schemas/tables, describe table structure, and run safe SELECT queries.",
+  "version": "0.1.0",
+  "websiteUrl": "https://github.com/kingsnow129/sqlserver-mcp",
+  "publisher": {
+    "name": "kingsnow129",
+    "url": "https://github.com/kingsnow129"
+  },
+  "repository": {
+    "source": "github",
+    "url": "https://github.com/kingsnow129/sqlserver-mcp"
+  },
+  "license": "MIT",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@kingsnow129/sqlserver-mcp",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "DB_SERVER",
+          "description": "SQL Server host name or IP",
+          "isRequired": true,
+          "placeholder": "localhost"
+        },
+        {
+          "name": "DB_PORT",
+          "description": "SQL Server port",
+          "default": "1433"
+        },
+        {
+          "name": "DB_NAME",
+          "description": "Database name",
+          "isRequired": true,
+          "placeholder": "master"
+        },
+        {
+          "name": "DB_USER",
+          "description": "Database user",
+          "isRequired": true,
+          "placeholder": "sa"
+        },
+        {
+          "name": "DB_PASSWORD",
+          "description": "Database password",
+          "isRequired": true,
+          "isSecret": true,
+          "placeholder": "<your-password>"
+        },
+        {
+          "name": "DB_ENCRYPT",
+          "default": "true"
+        },
+        {
+          "name": "DB_TRUST_SERVER_CERT",
+          "default": "true"
+        },
+        {
+          "name": "DB_READ_ONLY",
+          "default": "true"
+        },
+        {
+          "name": "DB_MAX_ROWS",
+          "default": "200"
+        }
+      ]
+    }
+  ],
+  "tools": [
+    {
+      "name": "connect",
+      "description": "Connect to SQL Server with optional runtime overrides."
+    },
+    {
+      "name": "health_check",
+      "description": "Check current SQL Server connection health."
+    },
+    {
+      "name": "list_schemas",
+      "description": "List available schemas."
+    },
+    {
+      "name": "list_tables",
+      "description": "List tables and views, optionally filtered by schema."
+    },
+    {
+      "name": "describe_table",
+      "description": "Describe table columns, PKs and indexes."
+    },
+    {
+      "name": "query",
+      "description": "Execute parameterized SELECT query."
+    }
+  ],
+  "tags": [
+    "mcp",
+    "sqlserver",
+    "database",
+    "nodejs"
+  ]
+}
