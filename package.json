@@ -1,6 +1,6 @@
 {
   "name": "@kingsnow129/sqlserver-mcp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "MCP server for SQL Server operations (connect, query, schema introspection)",
   "type": "module",
   "main": "src/server.js",

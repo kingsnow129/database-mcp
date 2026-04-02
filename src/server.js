@@ -356,7 +356,7 @@ async function handleToolCall(name, args = {}) {
 const server = new Server(
   {
     name: "sqlserver-mcp",
-    version: "0.1.0"
+    version: "0.2.0"
   },
   {
     capabilities: {
@@ -371,6 +371,9 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: TOOL_NAMES.CONNECT,
         description: "Connect to SQL Server with optional runtime overrides.",
+        annotations: {
+          readOnlyHint: true
+        },
         inputSchema: {
           type: "object",
           properties: {
@@ -387,6 +390,9 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: TOOL_NAMES.HEALTH_CHECK,
         description: "Check current SQL Server connection health.",
+        annotations: {
+          readOnlyHint: true
+        },
         inputSchema: {
           type: "object",
           properties: {}
@@ -395,6 +401,9 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: TOOL_NAMES.LIST_SCHEMAS,
         description: "List available schemas.",
+        annotations: {
+          readOnlyHint: true
+        },
         inputSchema: {
           type: "object",
           properties: {}
@@ -403,6 +412,9 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: TOOL_NAMES.LIST_TABLES,
         description: "List tables and views, optionally filtered by schema.",
+        annotations: {
+          readOnlyHint: true
+        },
         inputSchema: {
           type: "object",
           properties: {
@@ -413,6 +425,9 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: TOOL_NAMES.DESCRIBE_TABLE,
         description: "Describe table columns, PKs and indexes.",
+        annotations: {
+          readOnlyHint: true
+        },
         inputSchema: {
           type: "object",
           properties: {
@@ -425,6 +440,9 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: TOOL_NAMES.QUERY,
         description: "Execute parameterized SELECT query.",
+        annotations: {
+          readOnlyHint: true
+        },
         inputSchema: {
           type: "object",
           properties: {

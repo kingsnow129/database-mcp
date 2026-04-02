@@ -3,7 +3,7 @@
   "name": "io.github.kingsnow129/sqlserver-mcp",
   "title": "SQL Server MCP",
   "description": "Connect to SQL Server, inspect schemas/tables, describe table structure, and run safe SELECT queries.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "websiteUrl": "https://github.com/kingsnow129/sqlserver-mcp",
   "publisher": {
     "name": "kingsnow129",
@@ -18,7 +18,7 @@
     {
       "registryType": "npm",
       "identifier": "@kingsnow129/sqlserver-mcp",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "transport": {
         "type": "stdio"
       },

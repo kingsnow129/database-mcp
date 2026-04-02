@@ -1,0 +1,12 @@
+{
+  "servers": {
+    "sqlserverMcp": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/src/server.js"
+      ],
+      "envFile": "${workspaceFolder}/.env"
+    }
+  }
+}
