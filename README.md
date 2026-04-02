@@ -6,6 +6,49 @@ A minimal MCP server for SQL Server that supports:
 - describe_table
 - query (SELECT only by default)
 
+## Quick Start
+
+### Install from npm (Recommended)
+
+**This is the easiest and most reliable way to install. The package is published to npm registry and can be installed in any workspace.**
+
+```bash
+npm install @kingsnow129/sqlserver-mcp
+```
+
+Then configure it in your VS Code workspace by creating `.vscode/mcp.json`:
+
+```json
+{
+  "servers": {
+    "sqlserverMcp": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/node_modules/@kingsnow129/sqlserver-mcp/dist/server.js"
+      ],
+      "envFile": "${workspaceFolder}/.env"
+    }
+  }
+}
+```
+
+Copy `.env.example` to `.env` and configure your SQL Server connection details.
+
+If you want a direct CLI entry after installation, the package also exposes `sqlserver-mcp` via npm `bin`.
+
+**For Windows users:** Use the automated installer script below for hassle-free setup across all workspaces.
+
+### Windows Quick Install (User-Level)
+
+For a one-time setup that works in all VS Code workspaces:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install-user.ps1
+```
+
+This automatically configures your VS Code user profile without manual file editing.
+
 ## Copilot Workspace Manifest
 
 This repository now includes a ready-to-use workspace manifest at `.vscode/mcp.json` for VS Code and GitHub Copilot.
@@ -18,7 +61,7 @@ It launches the server with:
     "sqlserverMcp": {
       "type": "stdio",
       "command": "node",
-      "args": ["${workspaceFolder}/src/server.js"],
+      "args": ["${workspaceFolder}/dist/server.js"],
       "envFile": "${workspaceFolder}/.env"
     }
   }
@@ -61,7 +104,7 @@ The script writes this server config when auto-updating user MCP config:
       "type": "stdio",
       "command": "node",
       "args": [
-        "${userHome}/.mcp-servers/sqlserver-mcp/node_modules/@kingsnow129/sqlserver-mcp/src/server.js"
+        "${userHome}/.mcp-servers/sqlserver-mcp/node_modules/@kingsnow129/sqlserver-mcp/dist/server.js"
       ],
       "envFile": "${userHome}/.mcp-servers/sqlserver-mcp/.env"
     }
@@ -123,7 +166,7 @@ Create `.vscode/mcp.json` in that workspace:
       "type": "stdio",
       "command": "node",
       "args": [
-        "${workspaceFolder}/node_modules/@kingsnow129/sqlserver-mcp/src/server.js"
+        "${workspaceFolder}/node_modules/@kingsnow129/sqlserver-mcp/dist/server.js"
       ],
       "envFile": "${workspaceFolder}/.env"
     }
@@ -146,7 +189,7 @@ Important defaults:
 For local debugging outside Copilot:
 
 ```bash
-npm start
+npm run dev
 ```
 
 The server uses stdio transport, suitable for MCP clients.
@@ -156,11 +199,11 @@ The server uses stdio transport, suitable for MCP clients.
 The following validation steps were verified:
 
 - `npm pack --dry-run` includes only the expected runtime files
-- `node src/server.js` starts correctly in this repository
+- `npm run build` creates `dist/server.js` for runtime and publishing
 - the published package `@kingsnow129/sqlserver-mcp@0.2.1` was installed into a clean directory and successfully answered an MCP `listTools` request
 - Copilot-visible tools discovered during validation were `connect`, `health_check`, `list_schemas`, `list_tables`, `describe_table`, and `query`
 
-On this Windows environment, `npx -y @kingsnow129/sqlserver-mcp@0.2.1` did not start reliably, so the manifest intentionally uses a direct `node .../src/server.js` launch instead of the `npx <package>` shorthand.
+On this Windows environment, `npx -y @kingsnow129/sqlserver-mcp@0.2.1` did not start reliably, so the manifest intentionally uses a direct `node .../dist/server.js` launch instead of the `npx <package>` shorthand.
 
 ## 6) Tools
 

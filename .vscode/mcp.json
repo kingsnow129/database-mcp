@@ -4,7 +4,7 @@
       "type": "stdio",
       "command": "node",
       "args": [
-        "${workspaceFolder}/src/server.js"
+        "${workspaceFolder}/dist/server.js"
       ],
       "envFile": "${workspaceFolder}/.env"
     }

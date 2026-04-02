@@ -1,12 +1,13 @@
 {
   "name": "@kingsnow129/sqlserver-mcp",
-  "version": "0.2.1",
+  "version": "0.2.2",
+  "mcpName": "io.github.kingsnow129/sqlserver-mcp",
   "description": "MCP server for SQL Server operations (connect, query, schema introspection)",
   "author": "kingsnow129",
   "type": "module",
-  "main": "src/server.js",
+  "main": "dist/server.js",
   "bin": {
-    "sqlserver-mcp": "src/server.js"
+    "sqlserver-mcp": "dist/server.js"
   },
   "repository": {
     "type": "git",
@@ -20,7 +21,7 @@
     "node": ">=18"
   },
   "files": [
-    "src",
+    "dist",
     "README.md",
     ".env.example",
     "LICENSE"
@@ -29,8 +30,11 @@
     "access": "public"
   },
   "scripts": {
-    "start": "node src/server.js",
-    "pack:check": "npm pack --dry-run"
+    "build": "node scripts/build.mjs",
+    "prepare": "npm run build",
+    "start": "node dist/server.js",
+    "dev": "node src/server.js",
+    "pack:check": "npm run build && npm pack --dry-run"
   },
   "keywords": [
     "mcp",
