@@ -746,15 +746,29 @@ function serverNameMatchesInstance(serverName,instanceName) {
 }
 
 async function connectSqlServerWithFallback(config,sqlDriver) {
+  const {instanceName,hostOnly}=parseSqlServerHost(config.host);
+  const shouldValidateInstance=config.integratedAuth&&instanceName&&!config.connectionString;
+
   const baseSqlConfig=createSqlServerConfig(config);
 
   try {
     const client=await new sqlDriver.module.ConnectionPool(baseSqlConfig).connect();
+    
+    // Even if connection succeeds, verify it's the right instance if needed
+    if(shouldValidateInstance) {
+      const probeResult=await client.request().query("SELECT CAST(@@SERVERNAME AS nvarchar(256)) AS server_name");
+      const serverName=probeResult.recordset?.[0]?.server_name??"";
+      if(serverNameMatchesInstance(serverName,instanceName)) {
+        return {client,resolvedPort: config.port};
+      }
+      // Connected to wrong instance, close and continue fallback
+      await client.close();
+      throw new Error(`Connected to ${serverName} but expected ${instanceName}`);
+    }
+    
     return {client,resolvedPort: config.port};
   } catch(initialError) {
-    const {instanceName,hostOnly}=parseSqlServerHost(config.host);
-    const shouldProbe=config.integratedAuth&&instanceName&&!config.connectionString;
-    if(!shouldProbe) {
+    if(!shouldValidateInstance) {
       throw initialError;
     }
 

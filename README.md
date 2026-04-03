@@ -13,9 +13,13 @@ It provides tools for:
 ## Release
 
 Current release:
-- NPM package: `@kingsnow129/database-mcp@0.4.5`
+- NPM package: `@kingsnow129/database-mcp@0.4.6`
 - MCP server name: `database-mcp`
-- VSIX helper: `database-mcp-helper@0.4.5`
+- VSIX helper: `database-mcp-helper@0.4.6`
+
+## What Is New In 0.4.6
+
+- Fixed SQL Server integrated-auth instance routing bug: when the configured port can connect but resolves to a different SQL instance, MCP now verifies `@@SERVERNAME`, closes the wrong connection, and continues probing candidate ports until it matches the requested `server\\instance`.
 
 ## What Is New In 0.4.5
 
@@ -133,7 +137,7 @@ Build and install locally:
 cd vscode-extension
 npm install
 npm run package
-code --install-extension database-mcp-helper-0.4.5.vsix --force
+code --install-extension database-mcp-helper-0.4.6.vsix --force
 ```
 
 ## Safety Defaults
