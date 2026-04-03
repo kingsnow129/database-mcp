@@ -13,11 +13,17 @@ It provides tools for:
 ## Release
 
 Current release:
-- NPM package: `@kingsnow129/database-mcp@0.4.0`
+- NPM package: `@kingsnow129/database-mcp@0.4.1`
 - MCP server name: `database-mcp`
-- VSIX helper: `database-mcp-helper@0.4.0`
+- VSIX helper: `database-mcp-helper@0.4.1`
 
-## What Is New In 0.4.0
+## What Is New In 0.4.1
+
+- Enforced hard read-only mode for all connections (no override).
+- Added stronger query safety blocks for execution patterns.
+- Allowed spaces in server profile names in VSIX manager (e.g. `QA EUD`).
+
+## What Was Introduced In 0.4.0
 
 - Multi-database profile model (`servers` + `databases`) is now the primary config.
 - Automatic profile resolution during `connect`:
@@ -111,14 +117,16 @@ Build and install locally:
 cd vscode-extension
 npm install
 npm run package
-code --install-extension database-mcp-helper-0.4.0.vsix --force
+code --install-extension database-mcp-helper-0.4.1.vsix --force
 ```
 
 ## Safety Defaults
 
-- Read-only mode defaults to `true`
+- Read-only mode is hard-enforced (`connect.readOnly` overrides are ignored)
 - Query tool only accepts one SELECT statement
 - Semicolons are blocked
+- Stored procedure execution (`exec`, `execute`, `sp_*`, `xp_*`) is blocked
+- Function-call style execution patterns like `schema.fn(...)` are blocked
 - Returned rows are capped (default `200`)
 
 ## Development

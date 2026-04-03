@@ -20,6 +20,7 @@ const {Pool: PostgresPool}=pg;
 const SUPPORTED_ENGINES=new Set(["sqlserver","postgres","mysql"]);
 
 const CLI_OPTION_MAP={
+  target: "target",
   alias: "alias",
   serverName: "serverName",
   defaultAlias: "defaultAlias",
@@ -68,7 +69,7 @@ function parseCliArgs(argv) {
 
     const rawToken=String(token).slice(2);
     if(rawToken==="help") {
-      console.error("Supported flags: --alias --serverName --defaultAlias --profilesFile --currentServer --currentDatabase --engine --host --connectionString --server --port --database --user --password --encrypt --ssl --trustServerCertificate --readOnly --maxRows");
+      console.error("Supported flags: --target --alias --serverName --defaultAlias --profilesFile --currentServer --currentDatabase --engine --host --connectionString --server --port --database --user --password --encrypt --ssl --trustServerCertificate --readOnly --maxRows");
       process.exit(0);
     }
 
@@ -194,6 +195,16 @@ function resolveSavedProfile(overrides={}) {
   const profiles=loadProfiles();
   const {servers,aliases}=profiles;
 
+  const requestedTarget=firstDefined(overrides.target,cliOptions.target);
+  const matchServerByHost=(hostOrServer) => {
+    const wanted=normalizeHostForCompare(hostOrServer);
+    return Object.entries(servers).find(([,cfg]) => {
+      const hostA=normalizeHostForCompare(cfg?.host);
+      const hostB=normalizeHostForCompare(cfg?.server);
+      return wanted===hostA||wanted===hostB;
+    });
+  };
+
   const requestedAlias=firstDefined(overrides.alias,cliOptions.alias,process.env.DB_ALIAS);
   const requestedServerName=firstDefined(
     overrides.serverName,
@@ -208,6 +219,26 @@ function resolveSavedProfile(overrides={}) {
   let aliasName;
   let serverName;
   let serverProfile;
+
+  if(requestedTarget) {
+    const targetKey=String(requestedTarget).trim();
+    if(aliases[targetKey]&&typeof aliases[targetKey]==="object") {
+      source="target:alias";
+      aliasName=targetKey;
+      serverProfile=aliases[targetKey];
+    } else if(servers[targetKey]&&typeof servers[targetKey]==="object") {
+      source="target:serverName";
+      serverName=targetKey;
+      serverProfile=servers[targetKey];
+    } else {
+      const foundByTargetHost=matchServerByHost(targetKey);
+      if(foundByTargetHost) {
+        source="target:host";
+        serverName=foundByTargetHost[0];
+        serverProfile=foundByTargetHost[1];
+      }
+    }
+  }
 
   if(requestedAlias) {
     const aliasKey=String(requestedAlias).trim();
@@ -232,12 +263,7 @@ function resolveSavedProfile(overrides={}) {
   }
 
   if(!serverProfile&&requestedHost) {
-    const wanted=normalizeHostForCompare(requestedHost);
-    const found=Object.entries(servers).find(([,cfg]) => {
-      const hostA=normalizeHostForCompare(cfg?.host);
-      const hostB=normalizeHostForCompare(cfg?.server);
-      return wanted===hostA||wanted===hostB;
-    });
+    const found=matchServerByHost(requestedHost);
     if(found) {
       source="host";
       serverName=found[0];
@@ -402,7 +428,8 @@ function buildConfig(overrides={}) {
     user: integratedAuth? "":user,
     password: integratedAuth? "":password,
     connectionString,
-    readOnly: boolFromEnv(firstDefined(overrides.readOnly,dbConfig?.readOnly,serverProfile?.readOnly),getReadOnlyDefault()),
+    // Enforce hard read-only mode regardless of caller overrides.
+    readOnly: true,
     maxRows: intFromEnv(firstDefined(overrides.maxRows,dbConfig?.maxRows,serverProfile?.maxRows),getMaxRowsDefault()),
     trustServerCertificate: boolFromEnv(
       firstDefined(
@@ -739,6 +766,9 @@ function validateQuerySafety(sqlText) {
 
   const blockedPatterns=[
     /\b(insert|update|delete|drop|alter|create|truncate|merge|exec|execute|grant|revoke)\b/i,
+    /\b(call|declare)\b/i,
+    /\b(?:sp_|xp_)[A-Za-z0-9_]*\b/i,
+    /\b[A-Za-z0-9_]+\.[A-Za-z0-9_]+\s*\(/i,
     /--/,
     /\/\*/
   ];
@@ -756,7 +786,9 @@ async function handleToolCall(name,args={}) {
   switch(name) {
     case TOOL_NAMES.CONNECT: {
       const overrides={
+        ...(args.target? {target: args.target}:{}),
         ...(args.alias? {alias: args.alias}:{}),
+        ...(args.serverName? {serverName: args.serverName}:{}),
         ...(args.engine? {engine: args.engine}:{}),
         ...(args.connectionString? {connectionString: args.connectionString}:{}),
         ...(args.host? {host: args.host}:{}),
@@ -765,7 +797,6 @@ async function handleToolCall(name,args={}) {
         ...(args.database? {database: args.database}:{}),
         ...(args.user? {user: args.user}:{}),
         ...(args.password? {password: args.password}:{}),
-        ...(args.readOnly!==undefined? {readOnly: Boolean(args.readOnly)}:{}),
         ...(args.maxRows!==undefined? {maxRows: Number(args.maxRows)}:{}),
         ...(args.encrypt!==undefined? {encrypt: Boolean(args.encrypt)}:{}),
         ...(args.ssl!==undefined? {ssl: Boolean(args.ssl)}:{}),
@@ -969,6 +1000,7 @@ server.setRequestHandler(ListToolsRequestSchema,async () => {
         inputSchema: {
           type: "object",
           properties: {
+            target: {type: "string"},
             alias: {type: "string"},
             serverName: {type: "string"},
             engine: {type: "string",enum: ["sqlserver","postgres","mysql"]},

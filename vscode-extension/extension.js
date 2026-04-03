@@ -536,8 +536,8 @@ async function openAliasManagerPanel() {
         if(!serverName) {
           throw new Error("Server name is required.");
         }
-        if(!/^[A-Za-z0-9_-]+$/.test(serverName)) {
-          throw new Error("Use letters, numbers, underscore or hyphen in server name.");
+        if(!/^[A-Za-z0-9 _-]+$/.test(serverName)) {
+          throw new Error("Use letters, numbers, spaces, underscore or hyphen in server name.");
         }
 
         if(oldName&&oldName!==serverName&&state.servers[serverName]) {
