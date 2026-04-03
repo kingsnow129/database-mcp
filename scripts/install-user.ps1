@@ -4,8 +4,8 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$packageName = "@kingsnow129/sqlserver-mcp"
-$packageVersion = "0.3.0"
+$packageName = "@kingsnow129/database-mcp"
+$packageVersion = "0.4.0"
 $installRoot = Join-Path $HOME ".mcp-servers\database-mcp"
 $envTarget = Join-Path $installRoot ".env"
 $profilesTarget = Join-Path $installRoot "profiles.json"
@@ -15,7 +15,7 @@ $serverConfig = @{
   type = "stdio"
   command = "node"
   args = @(
-    '${userHome}/.mcp-servers/database-mcp/node_modules/@kingsnow129/sqlserver-mcp/dist/server.js'
+    '${userHome}/.mcp-servers/database-mcp/node_modules/@kingsnow129/database-mcp/dist/server.js'
   )
   envFile = '${userHome}/.mcp-servers/database-mcp/.env'
 }

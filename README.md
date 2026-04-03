@@ -13,11 +13,11 @@ It provides tools for:
 ## Release
 
 Current release:
-- NPM package: `@kingsnow129/sqlserver-mcp@0.3.0`
+- NPM package: `@kingsnow129/database-mcp@0.4.0`
 - MCP server name: `database-mcp`
-- VSIX helper: `database-mcp-helper@0.3.0`
+- VSIX helper: `database-mcp-helper@0.4.0`
 
-## What Is New In 0.3.0
+## What Is New In 0.4.0
 
 - Multi-database profile model (`servers` + `databases`) is now the primary config.
 - Automatic profile resolution during `connect`:
@@ -44,7 +44,7 @@ Example user/workspace MCP config:
       "type": "stdio",
       "command": "node",
       "args": [
-        "${userHome}/.mcp-servers/database-mcp/node_modules/@kingsnow129/sqlserver-mcp/dist/server.js",
+        "${userHome}/.mcp-servers/database-mcp/node_modules/@kingsnow129/database-mcp/dist/server.js",
         "--profilesFile",
         "${userHome}/.mcp-servers/database-mcp/profiles.json"
       ]
@@ -60,7 +60,7 @@ You can also run directly with NPX:
   "mcpServers": {
     "database-mcp": {
       "command": "npx",
-      "args": ["-y", "@kingsnow129/sqlserver-mcp"]
+      "args": ["-y", "@kingsnow129/database-mcp"]
     }
   }
 }
@@ -111,7 +111,7 @@ Build and install locally:
 cd vscode-extension
 npm install
 npm run package
-code --install-extension database-mcp-helper-0.3.0.vsix --force
+code --install-extension database-mcp-helper-0.4.0.vsix --force
 ```
 
 ## Safety Defaults

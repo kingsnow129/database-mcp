@@ -4,7 +4,7 @@ const path=require("node:path");
 const fs=require("node:fs");
 const {exec}=require("node:child_process");
 
-const PACKAGE_NAME="@kingsnow129/sqlserver-mcp";
+const PACKAGE_NAME="@kingsnow129/database-mcp";
 const PACKAGE_VERSION=require("./package.json").version;
 
 function getUserPaths() {
@@ -44,7 +44,7 @@ function getMcpServerConfig() {
     type: "stdio",
     command: "node",
     args: [
-      "${userHome}/.mcp-servers/database-mcp/node_modules/@kingsnow129/sqlserver-mcp/dist/server.js",
+      "${userHome}/.mcp-servers/database-mcp/node_modules/@kingsnow129/database-mcp/dist/server.js",
       "--profilesFile",
       "${userHome}/.mcp-servers/database-mcp/profiles.json"
     ]
@@ -991,7 +991,7 @@ async function openMcpListServers() {
 
 function activate(context) {
   const subscriptions=[
-    vscode.commands.registerCommand("sqlserverMcp.uninstallUser",async () => {
+    vscode.commands.registerCommand("databaseMcp.uninstallUser",async () => {
       try {
         await uninstallUser();
       } catch(error) {
@@ -999,7 +999,7 @@ function activate(context) {
         vscode.window.showErrorMessage(`Failed to uninstall Database MCP: ${message}`);
       }
     }),
-    vscode.commands.registerCommand("sqlserverMcp.manageAliases",async () => {
+    vscode.commands.registerCommand("databaseMcp.manageAliases",async () => {
       try {
         await manageAliases();
       } catch(error) {
@@ -1007,7 +1007,7 @@ function activate(context) {
         vscode.window.showErrorMessage(`Failed to manage aliases: ${message}`);
       }
     }),
-    vscode.commands.registerCommand("sqlserverMcp.openMcpListServers",async () => {
+    vscode.commands.registerCommand("databaseMcp.openMcpListServers",async () => {
       try {
         await openMcpListServers();
       } catch(error) {

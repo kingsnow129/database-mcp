@@ -2,11 +2,11 @@
   "name": "database-mcp-helper",
   "displayName": "Database MCP Helper",
   "description": "Install, manage, and uninstall user-level Database MCP profiles in VS Code.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "publisher": "kingsnow129",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kingsnow129/sqlserver-mcp"
+    "url": "https://github.com/kingsnow129/database-mcp"
   },
   "engines": {
     "vscode": "^1.99.0"
@@ -18,15 +18,15 @@
   "contributes": {
     "commands": [
       {
-        "command": "sqlserverMcp.uninstallUser",
+        "command": "databaseMcp.uninstallUser",
         "title": "Database MCP: Uninstall (User)"
       },
       {
-        "command": "sqlserverMcp.manageAliases",
+        "command": "databaseMcp.manageAliases",
         "title": "Database MCP: Manage Databases"
       },
       {
-        "command": "sqlserverMcp.openMcpListServers",
+        "command": "databaseMcp.openMcpListServers",
         "title": "Database MCP: Open MCP Server List"
       }
     ]

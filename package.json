@@ -1,22 +1,23 @@
 {
-  "name": "@kingsnow129/sqlserver-mcp",
-  "version": "0.3.0",
+  "name": "@kingsnow129/database-mcp",
+  "version": "0.4.0",
   "mcpName": "io.github.kingsnow129/database-mcp",
   "description": "Database MCP server for SQL Server, PostgreSQL, and MySQL with profile-based auto resolution",
   "author": "kingsnow129",
   "type": "module",
   "main": "dist/server.js",
   "bin": {
+    "database-mcp": "dist/server.js",
     "sqlserver-mcp": "dist/server.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kingsnow129/sqlserver-mcp.git"
+    "url": "git+https://github.com/kingsnow129/database-mcp.git"
   },
   "bugs": {
-    "url": "https://github.com/kingsnow129/sqlserver-mcp/issues"
+    "url": "https://github.com/kingsnow129/database-mcp/issues"
   },
-  "homepage": "https://github.com/kingsnow129/sqlserver-mcp#readme",
+  "homepage": "https://github.com/kingsnow129/database-mcp#readme",
   "engines": {
     "node": ">=18"
   },
