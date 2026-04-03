@@ -13,9 +13,15 @@ It provides tools for:
 ## Release
 
 Current release:
-- NPM package: `@kingsnow129/database-mcp@0.4.3`
+- NPM package: `@kingsnow129/database-mcp@0.4.4`
 - MCP server name: `database-mcp`
-- VSIX helper: `database-mcp-helper@0.4.3`
+- VSIX helper: `database-mcp-helper@0.4.4`
+
+## What Is New In 0.4.4
+
+- Fixed SQL Server `integratedAuth` connection handling by building explicit ODBC connection strings for `msnodesqlv8`.
+- Added optional `database` parameter on `query` to support dynamic database switching in one call.
+- Updated VSIX helper to auto-install MCP runtime on startup activation.
 
 ## What Is New In 0.4.3
 
@@ -122,7 +128,7 @@ Build and install locally:
 cd vscode-extension
 npm install
 npm run package
-code --install-extension database-mcp-helper-0.4.3.vsix --force
+code --install-extension database-mcp-helper-0.4.4.vsix --force
 ```
 
 ## Safety Defaults

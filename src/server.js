@@ -498,6 +498,28 @@ function createSqlServerConfig(config) {
     };
   }
 
+  if(config.integratedAuth) {
+    const rawHost=String(config.host??"").trim();
+    const hostOnly=rawHost.split("\\")[0];
+    const serverEndpoint=config.port
+      ? `tcp:${hostOnly},${config.port}`
+      : rawHost;
+
+    // msnodesqlv8 is ODBC-based; explicitly setting driver/server format avoids DSN resolution failures.
+    return {
+      connectionString: [
+        "Driver={ODBC Driver 18 for SQL Server}",
+        `Server=${serverEndpoint}`,
+        `Database=${config.database}`,
+        "Trusted_Connection=Yes",
+        `Encrypt=${config.encrypt? "Yes":"No"}`,
+        `TrustServerCertificate=${config.trustServerCertificate? "Yes":"No"}`
+      ].join(";"),
+      ...sharedTimeouts,
+      pool: sharedPool
+    };
+  }
+
   const baseConfig={
     server: config.host,
     port: config.port,
@@ -510,12 +532,7 @@ function createSqlServerConfig(config) {
     ...sharedTimeouts
   };
 
-  if(config.integratedAuth) {
-    baseConfig.options={
-      ...baseConfig.options,
-      trustedConnection: true
-    };
-  } else {
+  if(!config.integratedAuth) {
     baseConfig.user=config.user;
     baseConfig.password=config.password;
   }
@@ -985,7 +1002,15 @@ async function handleToolCall(name,args={}) {
     }
 
     case TOOL_NAMES.QUERY: {
-      await ensureConnected();
+      // If database parameter is provided and differs from current, switch database
+      if(args.database) {
+        const currentDb=runtimeConfig?.database;
+        if(currentDb!==args.database) {
+          await connectPool({database: args.database});
+        }
+      } else {
+        await ensureConnected();
+      }
 
       const sqlText=validateQuerySafety(args.sql);
       if(getReadOnlyMode()) {
@@ -1002,6 +1027,7 @@ async function handleToolCall(name,args={}) {
 
       return makeTextResult({
         engine: connection.engine,
+        database: runtimeConfig?.database,
         rowCount: rows.length,
         returnedRows: limitedRows.length,
         maxRows,
@@ -1111,7 +1137,7 @@ server.setRequestHandler(ListToolsRequestSchema,async () => {
       },
       {
         name: TOOL_NAMES.QUERY,
-        description: "Execute parameterized SELECT query.",
+        description: "Execute parameterized SELECT query. Optionally specify database to switch before query.",
         annotations: {
           readOnlyHint: true
         },
@@ -1119,6 +1145,7 @@ server.setRequestHandler(ListToolsRequestSchema,async () => {
           type: "object",
           properties: {
             sql: {type: "string"},
+            database: {type: "string"},
             params: {
               type: "object",
               additionalProperties: true

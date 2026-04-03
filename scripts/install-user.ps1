@@ -5,7 +5,7 @@ param(
 $ErrorActionPreference = "Stop"
 
 $packageName = "@kingsnow129/database-mcp"
-$packageVersion = "0.4.3"
+$packageVersion = "0.4.4"
 $installRoot = Join-Path $HOME ".mcp-servers\database-mcp"
 $envTarget = Join-Path $installRoot ".env"
 $profilesTarget = Join-Path $installRoot "profiles.json"
@@ -15,9 +15,10 @@ $serverConfig = @{
   type = "stdio"
   command = "node"
   args = @(
-    '${userHome}/.mcp-servers/database-mcp/node_modules/@kingsnow129/database-mcp/dist/server.js'
+    '${userHome}/.mcp-servers/database-mcp/node_modules/@kingsnow129/database-mcp/dist/server.js',
+    '--profilesFile',
+    '${userHome}/.mcp-servers/database-mcp/profiles.json'
   )
-  envFile = '${userHome}/.mcp-servers/database-mcp/.env'
 }
 
 Write-Host "Installing $packageName@$packageVersion into $installRoot"
@@ -43,8 +44,6 @@ try {
   if (-not (Test-Path $profilesTarget)) {
     $profiles = [pscustomobject]@{
       defaultServer = "local-server"
-      currentServer = "local-server"
-      currentDatabase = "master"
       servers = [pscustomobject]@{
         "local-server" = [pscustomobject]@{
           engine = "sqlserver"
@@ -55,19 +54,14 @@ try {
           password = ""
           encrypt = $true
           trustServerCertificate = $true
-          databases = @(
-            [pscustomobject]@{
-              name = "master"
-              readOnly = $true
-              maxRows = 200
-            }
-          )
+          databases = @()
         }
       }
     }
 
     $profiles | ConvertTo-Json -Depth 10 | Set-Content -Path $profilesTarget -Encoding UTF8
     Write-Host "Created profiles.json at: $profilesTarget"
+    Write-Host "Note: Edit this file or use 'Database MCP: Manage Databases' command to configure your database connections"
   }
 }
 finally {

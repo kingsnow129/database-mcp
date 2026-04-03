@@ -932,6 +932,30 @@ async function installOrUpdateUser() {
   vscode.window.showInformationMessage("Database MCP installed successfully. Ready to use.");
 }
 
+async function installOrUpdateUserSilent() {
+  const {installRoot,envPath,profilesPath,mcpJsonPath}=getUserPaths();
+  const npmCmd=process.platform==="win32"? "npm.cmd":"npm";
+
+  fs.mkdirSync(installRoot,{recursive: true});
+
+  const packageJsonPath=path.join(installRoot,"package.json");
+  if(!fs.existsSync(packageJsonPath)) {
+    await runCommand(npmCmd,["init","-y"],installRoot);
+  }
+
+  await runCommand(npmCmd,["install","--save-exact",`${PACKAGE_NAME}@${PACKAGE_VERSION}`],installRoot);
+
+  ensureEnvFile(envPath);
+  ensureProfilesFile(profilesPath);
+
+  const mcpConfig=readJsonIfExists(mcpJsonPath);
+  if(!mcpConfig.servers||typeof mcpConfig.servers!=="object") {
+    mcpConfig.servers={};
+  }
+  mcpConfig.servers.databaseMcp=getMcpServerConfig();
+  writeJson(mcpJsonPath,mcpConfig);
+}
+
 async function uninstallUser() {
   const {installRoot,mcpJsonPath}=getUserPaths();
 
@@ -965,6 +989,15 @@ async function openMcpListServers() {
 }
 
 function activate(context) {
+  void (async () => {
+    try {
+      await installOrUpdateUserSilent();
+    } catch(error) {
+      const message=error instanceof Error? error.message:String(error);
+      vscode.window.showWarningMessage(`Database MCP auto-setup skipped: ${message}`);
+    }
+  })();
+
   const subscriptions=[
     vscode.commands.registerCommand("databaseMcp.uninstallUser",async () => {
       try {
