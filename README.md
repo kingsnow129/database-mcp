@@ -8,42 +8,44 @@ A minimal MCP server for SQL Server that supports:
 
 ## Quick Start
 
-### Install from npm (Recommended)
+### Use with VS Code / Claude Desktop (Recommended)
 
-Install the published package:
-
-```bash
-npm install @kingsnow129/sqlserver-mcp
-```
-
-Then configure `.vscode/mcp.json`:
+Add the following to your MCP config (e.g. `.vscode/mcp.json` or `claude_desktop_config.json`):
 
 ```json
 {
-  "servers": {
-    "sqlserverMcp": {
-      "type": "stdio",
-      "command": "node",
-      "args": [
-        "${workspaceFolder}/node_modules/@kingsnow129/sqlserver-mcp/dist/server.js"
-      ],
-      "envFile": "${workspaceFolder}/.env"
+  "mcpServers": {
+    "sqlserver-mcp": {
+      "command": "npx",
+      "args": ["-y", "@kingsnow129/sqlserver-mcp"],
+      "env": {
+        "DB_CONNECTION_STRING": "Server=localhost,1433;Database=master;User Id=sa;Password=<password>;Encrypt=true;TrustServerCertificate=true"
+      }
     }
   }
 }
 ```
 
-For the simplest setup, use a single connection string in `.env`:
+That's it — no global install needed. `npx` downloads and runs the package on first use.
 
-```dotenv
-DB_CONNECTION_STRING=Server=localhost,1433;Database=master;User Id=sa;Password=<password>;Encrypt=true;TrustServerCertificate=true
-DB_READ_ONLY=true
-DB_MAX_ROWS=200
+You can also pass flags directly instead of env vars:
+
+```json
+{
+  "mcpServers": {
+    "sqlserver-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@kingsnow129/sqlserver-mcp",
+        "--connectionString", "Server=localhost,1433;Database=master;User Id=sa;Password=<password>;Encrypt=true;TrustServerCertificate=true",
+        "--readOnly",
+        "--maxRows", "200"
+      ]
+    }
+  }
+}
 ```
-
-If you prefer separate variables, copy `.env.example` to `.env` and fill in `DB_SERVER`, `DB_NAME`, `DB_USER`, and `DB_PASSWORD`.
-
-The package also accepts install-time flags such as `--connectionString`, `--readOnly`, and `--maxRows`.
 
 **For Windows users:** Use the automated installer script below for hassle-free setup across all workspaces.
 
