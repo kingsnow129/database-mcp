@@ -104,14 +104,14 @@ This installs to the user profile directory and updates user MCP config.
 
 Recommended cross-platform path notation:
 - In MCP JSON config: `${userHome}/.mcp-servers/database-mcp/...` (preferred)
-- In terminal commands: `%USERPROFILE%\\.mcp-servers\\database-mcp\\...` (Windows) or `$HOME/.mcp-servers/database-mcp/...` (macOS/Linux)
+- In terminal commands: `%USERPROFILE%\\.mcp-servers\\database-mcp\\...` (Windows cmd), `$env:USERPROFILE\\.mcp-servers\\database-mcp\\...` (Windows PowerShell), or `$HOME/.mcp-servers/database-mcp/...` (macOS/Linux)
 
 Windows actual paths:
 - MCP install folder: `C:\\Users\\<your-user>\\.mcp-servers\\database-mcp`
 - Profiles file: `C:\\Users\\<your-user>\\.mcp-servers\\database-mcp\\profiles.json`
 - MCP config: `%APPDATA%\\Code\\User\\mcp.json`
 
-Note: `${userHome}` is the preferred placeholder inside MCP config files. `%USERPROFILE%` and `$HOME` are shell environment variables for terminal usage.
+Note: `${userHome}` is the preferred placeholder inside MCP config files. `USERPROFILE` (used as `%USERPROFILE%` in cmd and `$env:USERPROFILE` in PowerShell) and `$HOME` are shell environment variables for terminal usage.
 
 ## User-Level Install (macOS / Linux)
 
