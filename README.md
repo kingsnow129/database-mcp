@@ -100,7 +100,70 @@ Run:
 powershell -ExecutionPolicy Bypass -File .\scripts\install-user.ps1
 ```
 
-This installs to `${HOME}\\.mcp-servers\\database-mcp` and updates `%APPDATA%\\Code\\User\\mcp.json`.
+This installs to the user profile directory and updates user MCP config.
+
+Recommended cross-platform path notation:
+- In MCP JSON config: `${userHome}/.mcp-servers/database-mcp/...` (preferred)
+- In terminal commands: `%USERPROFILE%\\.mcp-servers\\database-mcp\\...` (Windows) or `$HOME/.mcp-servers/database-mcp/...` (macOS/Linux)
+
+Windows actual paths:
+- MCP install folder: `C:\\Users\\<your-user>\\.mcp-servers\\database-mcp`
+- Profiles file: `C:\\Users\\<your-user>\\.mcp-servers\\database-mcp\\profiles.json`
+- MCP config: `%APPDATA%\\Code\\User\\mcp.json`
+
+Note: `${userHome}` is the preferred placeholder inside MCP config files. `%USERPROFILE%` and `$HOME` are shell environment variables for terminal usage.
+
+## User-Level Install (macOS / Linux)
+
+`install-user.ps1` is Windows-only. On macOS/Linux, install and configure manually:
+
+```bash
+mkdir -p ~/.mcp-servers/database-mcp
+cd ~/.mcp-servers/database-mcp
+npm init -y
+npm install --save-exact @kingsnow129/database-mcp@0.4.6
+```
+
+Create `~/.mcp-servers/database-mcp/profiles.json` (example):
+
+```json
+{
+  "defaultServer": "local-server",
+  "servers": {
+    "local-server": {
+      "engine": "sqlserver",
+      "host": "localhost",
+      "port": 1433,
+      "integratedAuth": false,
+      "user": "sa",
+      "password": "",
+      "encrypt": true,
+      "trustServerCertificate": true,
+      "databases": [
+        { "name": "master", "readOnly": true, "maxRows": 200 }
+      ]
+    }
+  }
+}
+```
+
+Then register MCP in your user MCP config (for example `~/.config/Code/User/mcp.json` on Linux, `~/Library/Application Support/Code/User/mcp.json` on macOS):
+
+```json
+{
+  "servers": {
+    "databaseMcp": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "${userHome}/.mcp-servers/database-mcp/node_modules/@kingsnow129/database-mcp/dist/server.js",
+        "--profilesFile",
+        "${userHome}/.mcp-servers/database-mcp/profiles.json"
+      ]
+    }
+  }
+}
+```
 
 ## Profiles Format
 
